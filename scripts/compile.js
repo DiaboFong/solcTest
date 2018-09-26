@@ -11,11 +11,15 @@ const contractSource = fs.readFileSync(contractPath,"UTF8")
 
 const result = solc.compile(contractSource,1)
 console.log(result)
+// check errors
+
+if (Array.isArray(result.errors) && result.errors.length){
+    throw new Error(result.errors[0])
+}
 
 //save to disk 
 Object.keys(result.contracts).forEach(name =>{
     const contractName = name.replace(/^:/,'')
-  //  const filePath = path.resolve(__dirname,'../complied',`${contractName}.json`)
     const filePath = path.resolve(compiledDir,`${contractName}.json`)
     fs.outputJsonSync(filePath,result.contracts[name])
     console.log(`save compiled contract ${contractName} to ${filePath}`)
